@@ -7,6 +7,6 @@ namespace DevelopigCommunityService.Models.Bassal
 {
     public class Individual
     {
-        public int mypro { get; set; }
+      
     }
 }
