@@ -13,8 +13,8 @@ namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
         public int Age { get; set; }
         public String Email { get; set; }
         public String Phone { get; set; }
-        public String Password { get; set; }
-        public String ConfPassword { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
         public byte[] Photo { get; set; }
 
         [ForeignKey("Department")]
