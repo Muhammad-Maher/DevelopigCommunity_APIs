@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevelopigCommunityService.Models.Bassal
 {
-    public class Admin:Person
+    public class Admin:AppUser
     {
         // same properties of person but have credintials on website management
     }
