@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Bassal;
+using DevelopigCommunityService.DTOs.Bassal;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -74,12 +77,30 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // POST: api/Individuals
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Individual>> PostIndividual(Individual individual)
+        public async Task<ActionResult<Individual>> PostIndividual(IndividualRegisterDTOs IndividualRegister)
         {
-            _context.Individuals.Add(individual);
+            using var hmac = new HMACSHA512();
+
+            var newIndividual = new Individual
+            {
+                UserName = IndividualRegister.UserName,
+                FirstName=IndividualRegister.FirstName,
+                LastName=IndividualRegister.LastName,
+                Age = IndividualRegister.Age,
+                Email = IndividualRegister.Email,
+                Phone = IndividualRegister.Phone,
+                DepartmentId = IndividualRegister.DepartId,
+                PasswordHash=hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualRegister.Password)),
+                PasswordSalt=hmac.Key
+            };
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetIndividual", new { id = individual.Id }, individual);
+            return newIndividual;
+           // _context.Individuals.Add(individual);
+          //  await _context.SaveChangesAsync();
+
+        //    return CreatedAtAction("GetIndividual", new { id = individual.Id }, individual);
         }
 
         // DELETE: api/Individuals/5

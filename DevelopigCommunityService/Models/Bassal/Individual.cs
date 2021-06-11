@@ -13,7 +13,7 @@ namespace DevelopigCommunityService.Models.Bassal
     {
 
         [ForeignKey("Department")]
-        public int DepartmentId { get; set; }
+        public int? DepartmentId { get; set; }
 
         public virtual Department Department { get; set; }
 
