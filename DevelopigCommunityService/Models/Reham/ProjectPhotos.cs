@@ -12,7 +12,7 @@ namespace DevelopigCommunityService.Models.Reham
         public int Id { get; set; }
         public String Url { get; set; }
 
-        [ForeignKey("Project")]
+        [ForeignKey("Project")] 
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
 
