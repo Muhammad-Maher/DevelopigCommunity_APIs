@@ -1,4 +1,5 @@
-﻿using DevelopigCommunityService.Interfaces;
+﻿using DevelopigCommunityService.DTOs.Bassal;
+using DevelopigCommunityService.Interfaces;
 using DevelopigCommunityService.Models.AbstractClasses.Bassal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -23,9 +24,15 @@ namespace DevelopigCommunityService.Services
 
         public string CreateToken(AppUser appUser)
         {
+            bool IsAdmin=false;
+            if (appUser.GetType().Name == "Admin") IsAdmin = true;
+
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId,appUser.UserName),
+                new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName,appUser.UserName),
+                new Claim(JwtRegisteredClaimNames.Iss,IsAdmin==true?"Admin":"AppUser")
+                
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
@@ -46,8 +53,11 @@ namespace DevelopigCommunityService.Services
         }
 
 
-        public void GetJWTClams(String encodedJWT)
+        public AuthDTOs GetJWTClams(String encodedJWT)
         {
+
+            if (encodedJWT == null) return null;
+
             encodedJWT = encodedJWT.Substring(7);
 
             var handler = new JwtSecurityTokenHandler();
@@ -57,7 +67,19 @@ namespace DevelopigCommunityService.Services
 
             var jwtClaim = Token.Claims.FirstOrDefault();
 
+
+
+            return new AuthDTOs
+            {
+                Id=int.Parse(Token?.Claims?.FirstOrDefault().Value),
+                NameId = Token?.Claims?.Skip(1).FirstOrDefault().Value,
+                IsAdmin = Token?.Claims?.Skip(2).FirstOrDefault().Value == "IsAdmin" ? true:false
+            };
+
+
             //jwtClaim.Value;
+
+
 
         }
     }

@@ -32,7 +32,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         {
             String str= Request.Headers["Authorization"].FirstOrDefault();
 
-            _tokenService.GetJWTClams(str);
+           var authUser= _tokenService.GetJWTClams(str);
             return await _context.Individuals.ToListAsync();
         }
 
