@@ -79,7 +79,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpPost]
         public async Task<ActionResult<Individual>> PostIndividual(IndividualRegisterDTOs IndividualRegister)
         {
-            using var hmac = new HMACSHA512();
+            if (await IndividualExists(IndividualRegister.UserName.ToLower())) return BadRequest("Username already exists");
+
+                using var hmac = new HMACSHA512();
 
             var newIndividual = new Individual
             {
@@ -123,5 +125,12 @@ namespace DevelopigCommunityService.Controllers.Bassal
         {
             return _context.Individuals.Any(e => e.Id == id);
         }
+
+        private async Task<bool> IndividualExists(String UserNameRegistered)
+        {
+
+            return await _context.Individuals.AnyAsync(e => e.UserName == UserNameRegistered);
+        }
+
     }
 }
