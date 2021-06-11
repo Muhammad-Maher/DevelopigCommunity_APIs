@@ -6,51 +6,53 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
-using DevelopigCommunityService.Models.Bassal;
+using DevelopigCommunityService.Models.Aya;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
-    public class IndividualsController : BaseApiController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DepartmentsController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public IndividualsController(DataContext context)
+        public DepartmentsController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Individuals
+        // GET: api/Departments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
+        public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
-            return await _context.Individuals.ToListAsync();
+            return await _context.Departments.ToListAsync();
         }
 
-        // GET: api/Individuals/5
+        // GET: api/Departments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Individual>> GetIndividual(int id)
+        public async Task<ActionResult<Department>> GetDepartment(int id)
         {
-            var individual = await _context.Individuals.FindAsync(id);
+            var department = await _context.Departments.FindAsync(id);
 
-            if (individual == null)
+            if (department == null)
             {
                 return NotFound();
             }
 
-            return individual;
+            return department;
         }
 
-        // PUT: api/Individuals/5
+        // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIndividual(int id, Individual individual)
+        public async Task<IActionResult> PutDepartment(int id, Department department)
         {
-            if (id != individual.Id)
+            if (id != department.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(individual).State = EntityState.Modified;
+            _context.Entry(department).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +60,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IndividualExists(id))
+                if (!DepartmentExists(id))
                 {
                     return NotFound();
                 }
@@ -71,36 +73,36 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return NoContent();
         }
 
-        // POST: api/Individuals
+        // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Individual>> PostIndividual(Individual individual)
+        public async Task<ActionResult<Department>> PostDepartment(Department department)
         {
-            _context.Individuals.Add(individual);
+            _context.Departments.Add(department);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetIndividual", new { id = individual.Id }, individual);
+            return CreatedAtAction("GetDepartment", new { id = department.Id }, department);
         }
 
-        // DELETE: api/Individuals/5
+        // DELETE: api/Departments/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteIndividual(int id)
+        public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var individual = await _context.Individuals.FindAsync(id);
-            if (individual == null)
+            var department = await _context.Departments.FindAsync(id);
+            if (department == null)
             {
                 return NotFound();
             }
 
-            _context.Individuals.Remove(individual);
+            _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool IndividualExists(int id)
+        private bool DepartmentExists(int id)
         {
-            return _context.Individuals.Any(e => e.Id == id);
+            return _context.Departments.Any(e => e.Id == id);
         }
     }
 }

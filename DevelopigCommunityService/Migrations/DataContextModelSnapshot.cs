@@ -62,9 +62,6 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -148,7 +145,7 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("EducationBackground")
@@ -193,9 +190,6 @@ namespace DevelopigCommunityService.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -362,9 +356,7 @@ namespace DevelopigCommunityService.Migrations
                 {
                     b.HasOne("DevelopigCommunityService.Models.Aya.Department", "Department")
                         .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });

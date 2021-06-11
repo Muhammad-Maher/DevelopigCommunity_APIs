@@ -17,9 +17,7 @@ namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
         public byte[] PasswordSalt { get; set; }
         public byte[] Photo { get; set; }
 
-        [ForeignKey("Department")]
-        public int DepartmentId { get; set; }
-
+     
         public DateTime StartAccess { get; set; }
         public DateTime EndAccess { get; set; }
 

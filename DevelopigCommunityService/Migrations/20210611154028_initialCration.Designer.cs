@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevelopigCommunityService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210611114943_initialCreate")]
-    partial class initialCreate
+    [Migration("20210611154028_initialCration")]
+    partial class initialCration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,12 +64,6 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConfPassword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -79,8 +73,11 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -106,9 +103,6 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConfPassword")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
@@ -121,8 +115,11 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -150,10 +147,7 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConfPassword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DepartmentId")
+                    b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("EducationBackground")
@@ -168,8 +162,11 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -197,12 +194,6 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConfPassword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -212,8 +203,11 @@ namespace DevelopigCommunityService.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -364,9 +358,7 @@ namespace DevelopigCommunityService.Migrations
                 {
                     b.HasOne("DevelopigCommunityService.Models.Aya.Department", "Department")
                         .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });
