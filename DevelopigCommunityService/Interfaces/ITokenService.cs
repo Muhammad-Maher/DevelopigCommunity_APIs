@@ -1,4 +1,5 @@
-﻿using DevelopigCommunityService.Models.AbstractClasses.Bassal;
+﻿using DevelopigCommunityService.DTOs.Bassal;
+using DevelopigCommunityService.Models.AbstractClasses.Bassal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace DevelopigCommunityService.Interfaces
     {
         String CreateToken(AppUser appUser);
 
-        void GetJWTClams(String JWTToken);
+        AuthDTOs GetJWTClams(String JWTToken);
     }
 }
