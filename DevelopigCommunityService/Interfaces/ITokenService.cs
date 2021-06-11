@@ -9,5 +9,7 @@ namespace DevelopigCommunityService.Interfaces
     public interface ITokenService
     {
         String CreateToken(AppUser appUser);
+
+        void GetJWTClams(String JWTToken);
     }
 }
