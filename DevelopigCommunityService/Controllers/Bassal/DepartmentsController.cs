@@ -7,18 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Aya;
+using Microsoft.AspNetCore.Authorization;
+using DevelopigCommunityService.Interfaces;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DepartmentsController : ControllerBase
+    public class DepartmentsController : BaseApiController
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public DepartmentsController(DataContext context)
+        public DepartmentsController(DataContext context,ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/Departments
@@ -45,8 +47,13 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutDepartment(int id, Department department)
         {
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+
             if (id != department.Id)
             {
                 return BadRequest();

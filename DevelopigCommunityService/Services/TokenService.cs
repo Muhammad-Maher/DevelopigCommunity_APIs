@@ -24,11 +24,14 @@ namespace DevelopigCommunityService.Services
 
         public string CreateToken(AppUser appUser)
         {
+            bool IsAdmin=false;
+            if (appUser.GetType().Name == "Admin") IsAdmin = true;
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName,appUser.UserName),
-                new Claim(JwtRegisteredClaimNames.Iss,"AppUser")
+                new Claim(JwtRegisteredClaimNames.Iss,IsAdmin==true?"Admin":"AppUser")
                 
             };
 
@@ -75,6 +78,8 @@ namespace DevelopigCommunityService.Services
 
 
             //jwtClaim.Value;
+
+
 
         }
     }
