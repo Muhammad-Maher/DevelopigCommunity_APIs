@@ -25,7 +25,7 @@ namespace DevelopigCommunityService.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId,appUser.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId,appUser.UserName),
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
@@ -43,6 +43,22 @@ namespace DevelopigCommunityService.Services
 
 
             return TokenHandler.WriteToken(Token);
+        }
+
+
+        public void GetJWTClams(String encodedJWT)
+        {
+            encodedJWT = encodedJWT.Substring(7);
+
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadJwtToken(encodedJWT);
+
+            var Token = jsonToken as JwtSecurityToken;
+
+            var jwtClaim = Token.Claims.FirstOrDefault();
+
+            //jwtClaim.Value;
+
         }
     }
 }

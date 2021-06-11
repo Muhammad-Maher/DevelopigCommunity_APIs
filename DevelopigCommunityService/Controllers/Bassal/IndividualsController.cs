@@ -30,6 +30,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
         {
+            String str= Request.Headers["Authorization"].FirstOrDefault();
+
+            _tokenService.GetJWTClams(str);
             return await _context.Individuals.ToListAsync();
         }
 
