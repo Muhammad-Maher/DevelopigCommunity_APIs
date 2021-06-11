@@ -68,7 +68,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IndividualExists(id))
+                if (! await IndividualExists(id))
                 {
                     return NotFound();
                 }
@@ -158,9 +158,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return NoContent();
         }
 
-        private bool IndividualExists(int id)
+        private async Task<bool> IndividualExists(int id)
         {
-            return _context.Individuals.Any(e => e.Id == id);
+            return await _context.Individuals.AnyAsync(e => e.Id == id);
         }
 
         private async Task<bool> IndividualExists(String UserNameRegistered)
