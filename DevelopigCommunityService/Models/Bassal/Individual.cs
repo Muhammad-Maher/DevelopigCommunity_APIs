@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace DevelopigCommunityService.Models.Bassal
 {
-    public class Individual:Person
+    public class Individual:AppUser
     {
-        public DateTime StartAccess { get; set; }
-        public DateTime EndAccess { get; set; }
-        public String EducationBackground { get; set; }
+      
         public virtual Department Department { get; set; }
 
         // category access

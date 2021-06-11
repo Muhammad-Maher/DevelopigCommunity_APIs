@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
 {
-    abstract public class Person
+    abstract public class AppUser
     {
         public int Id { get; set; }
         public String Name { get; set; }
@@ -19,6 +19,9 @@ namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
 
         [ForeignKey("Department")]
         public int DepartmentId { get; set; }
-      
+
+        public DateTime StartAccess { get; set; }
+        public DateTime EndAccess { get; set; }
+
     }
 }

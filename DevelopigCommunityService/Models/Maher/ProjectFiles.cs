@@ -7,5 +7,8 @@ namespace DevelopigCommunityService.Models.Maher
 {
     public class ProjectFiles
     {
+        public int Id { get; set; }
+        
+        // stramfile
     }
 }
