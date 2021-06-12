@@ -11,6 +11,7 @@ using DevelopigCommunityService.DTOs.Ebtisam;
 using System.Security.Cryptography;
 using System.Text;
 using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DevelopigCommunityService.Controllers.Ebtisam
 {
@@ -30,6 +31,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // GET: api/Students
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
             return await _context.Students.ToListAsync();
@@ -37,6 +39,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // GET: api/Students/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
@@ -146,6 +149,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
