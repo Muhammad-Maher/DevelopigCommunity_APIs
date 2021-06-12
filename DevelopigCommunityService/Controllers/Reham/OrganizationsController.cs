@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Reham;
+using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DevelopigCommunityService.Controllers.Reham
 {
@@ -15,14 +17,17 @@ namespace DevelopigCommunityService.Controllers.Reham
     public class OrganizationsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public OrganizationsController(DataContext context)
+        public OrganizationsController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/Organizations
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Organization>>> GetOrganizations()
         {
             return await _context.Organizations.ToListAsync();
@@ -30,6 +35,7 @@ namespace DevelopigCommunityService.Controllers.Reham
 
         // GET: api/Organizations/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Organization>> GetOrganization(int id)
         {
             var organization = await _context.Organizations.FindAsync(id);
@@ -44,6 +50,7 @@ namespace DevelopigCommunityService.Controllers.Reham
 
         // PUT: api/Organizations/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOrganization(int id, Organization organization)
         {
             if (id != organization.Id)
@@ -75,6 +82,7 @@ namespace DevelopigCommunityService.Controllers.Reham
         // POST: api/Organizations
         
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Organization>> PostOrganization(Organization organization)
         {
             _context.Organizations.Add(organization);
@@ -85,6 +93,7 @@ namespace DevelopigCommunityService.Controllers.Reham
 
         // DELETE: api/Organizations/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrganization(int id)
         {
             var organization = await _context.Organizations.FindAsync(id);
