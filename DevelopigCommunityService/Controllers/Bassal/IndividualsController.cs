@@ -259,7 +259,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             return NoContent();
         }
-
+        
         private async Task<bool> IndividualExists(int id)
         {
             return await _context.Individuals.AnyAsync(e => e.Id == id);

@@ -70,7 +70,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DepartmentExists(id))
+                if (! await DepartmentExists(id))
                 {
                     return NotFound();
                 }
@@ -91,12 +91,21 @@ namespace DevelopigCommunityService.Controllers.Bassal
         {
 
 
-            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+            //String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
 
-            var authUser = _tokenService.GetJWTClams(authHeaders);
+            //var authUser = _tokenService.GetJWTClams(authHeaders);
 
-            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
+            //if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
 
+            
+           if(await DepartmentExists(department.Name.ToLower()))
+            {
+                return Conflict("Department with this name already exists");
+            }
+            
+            
+            department.IsActive = true;
+            department.Name = department.Name.ToLower();
 
             _context.Departments.Add(department);
             await _context.SaveChangesAsync();
@@ -123,6 +132,10 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
+            await _context.Individuals.Where(ww => ww.DepartmentId == id).ForEachAsync(ww => ww.DepartmentId = null);
+            await _context.Students.Where(ww => ww.DepartmentId == id).ForEachAsync(ww => ww.DepartmentId = null);
+            await _context.Instructors.Where(ww => ww.DepartmentId == id).ForEachAsync(ww => ww.DepartmentId = null);
+
             department.IsActive = false;
 
             _context.Entry(department).State = EntityState.Modified;
@@ -133,9 +146,14 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return NoContent();
         }
 
-        private bool DepartmentExists(int id)
+        private async Task<bool> DepartmentExists(int id)
         {
-            return _context.Departments.Any(e => e.Id == id);
+            return await _context.Departments.AnyAsync(e => e.Id == id);
+        } 
+        
+        private async Task<bool> DepartmentExists(String DeptName)
+        {
+            return await _context.Departments.AnyAsync(e => e.Name == DeptName);
         }
     }
 }

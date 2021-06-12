@@ -27,6 +27,10 @@ namespace DevelopigCommunityService.Models.Maher
 
         [NotMapped]
         public virtual Department Department { get; set; } = new Department();
+
+        [ForeignKey("Department")]
+        public int? DepartmentId { get; set; }
+
         [NotMapped]
         public virtual Organization Organization { get; set; } = new Organization();
        
