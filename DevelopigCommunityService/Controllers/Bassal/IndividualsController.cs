@@ -40,7 +40,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
         // GET: api/Individuals/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IndividualReturnDataDTOs>> GetIndividual(int id)
+        public async Task<ActionResult<Individual>> GetIndividual(int id)
         {
             var individual = await _context.Individuals.FindAsync(id);
 
@@ -49,18 +49,20 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
-            if (individual.IsActive == false) return NotFound("User no longer exists");
+           if (individual.IsActive == false) return NotFound("User no longer exists");
 
-            return new IndividualReturnDataDTOs
-            {
-                UserName = individual.UserName,
-                Age = individual.Age,
-                Email = individual.Email,
-                FirstName = individual.FirstName,
-                Id = individual.Id,
-                LastName = individual.LastName,
-                Phone = individual.Phone
-            };
+            //return new IndividualReturnDataDTOs
+            //{
+            //    UserName = individual.UserName,
+            //    Age = individual.Age,
+            //    Email = individual.Email,
+            //    FirstName = individual.FirstName,
+            //    Id = individual.Id,
+            //    LastName = individual.LastName,
+            //    Phone = individual.Phone,
+
+            //};
+            return individual;
         }
 
         // PUT: api/Individuals/5

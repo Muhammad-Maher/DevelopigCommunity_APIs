@@ -38,6 +38,7 @@ namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
             return PasswordHash;
         }
 
+        [JsonIgnore]
         public bool IsActive { get; set; }
 
     }
