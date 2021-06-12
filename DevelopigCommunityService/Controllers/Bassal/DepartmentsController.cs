@@ -109,11 +109,11 @@ namespace DevelopigCommunityService.Controllers.Bassal
         public async Task<IActionResult> DeleteDepartment(int id)
         {
 
-            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+            //String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
 
-            var authUser = _tokenService.GetJWTClams(authHeaders);
+            //var authUser = _tokenService.GetJWTClams(authHeaders);
 
-            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
+            //if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
 
 
 
@@ -123,7 +123,11 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
-            _context.Departments.Remove(department);
+            department.IsActive = false;
+
+            _context.Entry(department).State = EntityState.Modified;
+
+            //_context.Departments.Remove(department);
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -33,7 +33,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
         {
 
-            return await _context.Individuals.Where(ww => ww.IsActive == true).ToListAsync();
+            return await _context.Individuals.Where(ww => ww.IsActive == false).Include(ss=>ss.Department).ToListAsync();
 
             //return await _context.Individuals.Include(WW=>WW.Department).ToListAsync();
         }
