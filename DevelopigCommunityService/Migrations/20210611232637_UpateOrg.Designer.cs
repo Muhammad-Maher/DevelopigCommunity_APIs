@@ -4,14 +4,16 @@ using DevelopigCommunityService.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DevelopigCommunityService.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210611232637_UpateOrg")]
+    partial class UpateOrg
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,15 +329,10 @@ namespace DevelopigCommunityService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectPhotos");
                 });
@@ -431,17 +428,6 @@ namespace DevelopigCommunityService.Migrations
                         .HasForeignKey("OrganizationTypeId");
 
                     b.Navigation("OrganizationType");
-                });
-
-            modelBuilder.Entity("DevelopigCommunityService.Models.Reham.ProjectPhotos", b =>
-                {
-                    b.HasOne("DevelopigCommunityService.Models.Somaya.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("IndividualProject", b =>

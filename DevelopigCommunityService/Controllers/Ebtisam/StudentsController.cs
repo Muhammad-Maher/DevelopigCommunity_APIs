@@ -11,6 +11,7 @@ using DevelopigCommunityService.DTOs.Ebtisam;
 using System.Security.Cryptography;
 using System.Text;
 using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DevelopigCommunityService.Controllers.Ebtisam
 {
@@ -30,6 +31,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // GET: api/Students
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
             return await _context.Students.ToListAsync();
@@ -37,6 +39,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // GET: api/Students/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
@@ -122,12 +125,15 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
+            using var hmac = new HMACSHA512(user.GetPasswordSalt());
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studentlogin.Password));
+
+            byte[] passwordHash = user.GetPasswordHash();
+                
 
             for (int i = 0; i < ComputeHash.Length; i++)
             {
-                if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+                if (ComputeHash[i] != passwordHash[i]) return Unauthorized("Invalid Password");
             }
 
             return new StudentsDTO
@@ -143,6 +149,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);

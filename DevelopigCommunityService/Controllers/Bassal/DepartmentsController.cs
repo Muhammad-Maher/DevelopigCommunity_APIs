@@ -53,6 +53,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
 
+            var authUser=_tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Department");
 
             if (id != department.Id)
             {
@@ -83,8 +86,18 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Department>> PostDepartment(Department department)
         {
+
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
+
+
             _context.Departments.Add(department);
             await _context.SaveChangesAsync();
 
@@ -95,6 +108,15 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
+
+
+
             var department = await _context.Departments.FindAsync(id);
             if (department == null)
             {

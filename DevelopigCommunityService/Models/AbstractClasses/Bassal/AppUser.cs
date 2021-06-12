@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -15,13 +16,28 @@ namespace DevelopigCommunityService.Models.AbstractClasses.Bassal
         public int Age { get; set; }
         public String Email { get; set; }
         public String Phone { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
+        
+        [JsonIgnore]
+        public byte[] PasswordHash { set;  get; }
+
+        [JsonIgnore]
+        public byte[] PasswordSalt {set;  get; }
         public byte[] Photo { get; set; }
 
      
         public DateTime StartAccess { get; set; }
         public DateTime EndAccess { get; set; }
+
+        public byte[] GetPasswordSalt()
+        {
+            return PasswordSalt;
+        }
+
+        public byte[] GetPasswordHash()
+        {
+            return PasswordHash;
+        }
+
 
     }
 }
