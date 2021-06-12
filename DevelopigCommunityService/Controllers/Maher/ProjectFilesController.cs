@@ -8,6 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Maher;
 
+
+// ADDED NAMESPACES
+using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+//
+
 namespace DevelopigCommunityService.Controllers.Maher
 {
     [Route("api/[controller]")]
@@ -15,21 +21,23 @@ namespace DevelopigCommunityService.Controllers.Maher
     public class ProjectFilesController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public ProjectFilesController(DataContext context)
+        public ProjectFilesController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/ProjectFiles
-        [HttpGet]
+        [HttpGet]        
         public async Task<ActionResult<IEnumerable<ProjectFiles>>> GetProjectFiles()
         {
             return await _context.ProjectFiles.ToListAsync();
         }
 
         // GET: api/ProjectFiles/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}")]        
         public async Task<ActionResult<ProjectFiles>> GetProjectFiles(int id)
         {
             var projectFiles = await _context.ProjectFiles.FindAsync(id);
@@ -45,6 +53,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         // PUT: api/ProjectFiles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutProjectFiles(int id, ProjectFiles projectFiles)
         {
             if (id != projectFiles.Id)
@@ -76,6 +85,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         // POST: api/ProjectFiles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ProjectFiles>> PostProjectFiles(ProjectFiles projectFiles)
         {
             _context.ProjectFiles.Add(projectFiles);
@@ -86,6 +96,7 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // DELETE: api/ProjectFiles/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProjectFiles(int id)
         {
             var projectFiles = await _context.ProjectFiles.FindAsync(id);

@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Maher;
 
+// ADDED NAMESPACES
+using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+//
+
 namespace DevelopigCommunityService.Controllers.Maher
 {
     [Route("api/[controller]")]
@@ -15,14 +20,18 @@ namespace DevelopigCommunityService.Controllers.Maher
     public class InstructorsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public InstructorsController(DataContext context)
+        public InstructorsController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
+
         }
 
         // GET: api/Instructors
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Instructor>>> GetInstructors()
         {
             return await _context.Instructors.ToListAsync();
@@ -30,6 +39,7 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // GET: api/Instructors/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Instructor>> GetInstructor(int id)
         {
             var instructor = await _context.Instructors.FindAsync(id);
@@ -45,6 +55,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         // PUT: api/Instructors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutInstructor(int id, Instructor instructor)
         {
             if (id != instructor.Id)
@@ -76,6 +87,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         // POST: api/Instructors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Instructor>> PostInstructor(Instructor instructor)
         {
             _context.Instructors.Add(instructor);
@@ -86,6 +98,8 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // DELETE: api/Instructors/5
         [HttpDelete("{id}")]
+        [Authorize]
+
         public async Task<IActionResult> DeleteInstructor(int id)
         {
             var instructor = await _context.Instructors.FindAsync(id);
