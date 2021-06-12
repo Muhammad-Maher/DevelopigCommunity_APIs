@@ -55,6 +55,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
         public async Task<ActionResult<Admin>> Register(AdminRegisterDTOs AdminRegister)
         {
 
+            if (AdminRegister.Password != AdminRegister.ConfPassword) return BadRequest("Password and ConfPassword don't match");
+
+
             if (await AdminExists(AdminRegister.UserName.ToLower())) return BadRequest("Admin name already exists");
 
             using var hmac = new HMACSHA512();

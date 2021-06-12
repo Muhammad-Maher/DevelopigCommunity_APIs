@@ -98,6 +98,8 @@ namespace DevelopigCommunityService.Controllers.Bassal
         public async Task<ActionResult<Individual>> Register(IndividualRegisterDTOs IndividualRegister)
         {
 
+            if (IndividualRegister.Password != IndividualRegister.ConfPassword) return BadRequest("Password and ConfPassword don't match");
+
             if (await IndividualExists(IndividualRegister.UserName.ToLower())) return BadRequest("Username already exists");
 
             using var hmac = new HMACSHA512();
