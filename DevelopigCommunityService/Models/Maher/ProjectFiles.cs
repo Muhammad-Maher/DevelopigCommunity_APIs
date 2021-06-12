@@ -19,9 +19,8 @@ namespace DevelopigCommunityService.Models.Maher
         public int ProjectId { get; set; }
 
         public string FileUrl { get; set; }
-                    
 
-        [NotMapped]
+
         public virtual Project Project { get; set; } = new Project();
     }
 }

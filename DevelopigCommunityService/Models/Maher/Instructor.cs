@@ -21,17 +21,15 @@ namespace DevelopigCommunityService.Models.Maher
     {
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
-        public Confirmed Confirmed { get; set; }
+        public Confirmed Confirmed { get; set; } = Confirmed.No;
         public String EducationBackground { get; set; }
         public string CategoryAccess { get; set; }
-
-        [NotMapped]
-        public virtual Department Department { get; set; } = new Department();
 
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
 
-        [NotMapped]
+        public virtual Department Department { get; set; } = new Department();
+
         public virtual Organization Organization { get; set; } = new Organization();
        
 
