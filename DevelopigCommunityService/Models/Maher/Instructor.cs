@@ -24,8 +24,6 @@ namespace DevelopigCommunityService.Models.Maher
         public Confirmed Confirmed { get; set; }
         public String EducationBackground { get; set; }
         public string CategoryAccess { get; set; }
-         [ForeignKey("Department")]
-        public int? DepartmentId { get; set; }
 
         [NotMapped]
         public virtual Department Department { get; set; } = new Department();
