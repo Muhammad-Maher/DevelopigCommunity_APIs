@@ -52,7 +52,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // POST: api/Individuals
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Register")]
-        public async Task<ActionResult<Individual>> Register(AdminRegisterDTOs AdminRegister)
+        public async Task<ActionResult<Admin>> Register(AdminRegisterDTOs AdminRegister)
         {
 
             if (await AdminExists(AdminRegister.UserName.ToLower())) return BadRequest("Admin name already exists");
@@ -84,29 +84,29 @@ namespace DevelopigCommunityService.Controllers.Bassal
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<IndividualDTOs>> Login(IndividualLoginDTO IndividualLogin)
+        public async Task<ActionResult<AdminDTOs>> Login(AdminLoginDTOs adminLogin)
         {
 
-            var user = await _context.Individuals
-                .SingleOrDefaultAsync(ww => ww.UserName == IndividualLogin.UserName.ToLower());
+            var admin = await _context.Admins
+                .SingleOrDefaultAsync(ww => ww.UserName == adminLogin.UserName.ToLower());
 
-            if (user == null) return Unauthorized("Username or password is invalid");
+            if (admin == null) return Unauthorized("admin username or password is invalid");
 
-            using var hmac = new HMACSHA512(user.GetPasswordSalt());
+            using var hmac = new HMACSHA512(admin.GetPasswordSalt());
 
-            var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualLogin.Password));
+            var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(adminLogin.Password));
 
-            byte[] passHasg = user.GetPasswordHash();
+            byte[] passHasg = admin.GetPasswordHash();
             
             for (int i = 0; i < ComputeHash.Length; i++)
             {
                 if (ComputeHash[i] != passHasg[i]) return Unauthorized("Invalid Password");
             }
 
-            return new IndividualDTOs
+            return new AdminDTOs
             {
-                UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                UserName = admin.UserName,
+                Token = _tokenService.CreateToken(admin)
             };
         }
 
