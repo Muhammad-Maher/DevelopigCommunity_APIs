@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace DevelopigCommunityService.Models.Aya
         public String Name { get; set; }
         public String Description { get; set; }
 
+        [JsonIgnore]
         public bool IsActive { get; set; }
 
     }
