@@ -9,6 +9,7 @@ using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Aya;
 using Microsoft.AspNetCore.Authorization;
 using DevelopigCommunityService.Interfaces;
+using DevelopigCommunityService.DTOs.Bassal;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -87,7 +88,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Department>> PostDepartment(Department department)
+        public async Task<ActionResult<Department>> PostDepartment(DepartmentDTO newDepartment)
         {
 
 
@@ -98,19 +99,22 @@ namespace DevelopigCommunityService.Controllers.Bassal
             //if (authUser.IsAdmin == false) return Unauthorized("Only Admin can add new Departments");
 
             
-           if(await DepartmentExists(department.Name.ToLower()))
+           if(await DepartmentExists(newDepartment.Name.ToLower()))
             {
                 return Conflict("Department with this name already exists");
             }
-            
-            
-            department.IsActive = true;
-            department.Name = department.Name.ToLower();
 
-            _context.Departments.Add(department);
+            Department newDept = new Department
+            {
+                Name = newDepartment.Name.ToLower(),
+                Description = newDepartment.Description,
+                IsActive = true
+            };
+
+            _context.Departments.Add(newDept);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDepartment", new { id = department.Id }, department);
+            return CreatedAtAction("GetDepartment", new { id = newDept.Id }, newDept);
         }
 
         // DELETE: api/Departments/5
