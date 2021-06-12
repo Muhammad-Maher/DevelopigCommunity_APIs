@@ -6,6 +6,6 @@
 http://team1project-001-site1.htempurl.com/
 
 ## Database Diagram
-<img src="https://res.cloudinary.com/ecommerce-food/image/upload/v1623521531/finalProject/DBDiagram_igjqms.png">
+
 
 
