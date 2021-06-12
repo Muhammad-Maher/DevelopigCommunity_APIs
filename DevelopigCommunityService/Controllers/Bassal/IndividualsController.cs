@@ -13,6 +13,7 @@ using System.Text;
 using DevelopigCommunityService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using DevelopigCommunityService.DTOs.AbstractClasses;
+using DevelopigCommunityService.Models.Aya;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -32,8 +33,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
         public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
         {
 
+            return await _context.Individuals.Where(ww => ww.IsActive == true).ToListAsync();
 
-            return await _context.Individuals.Include(ww => ww.Department).ToListAsync();
+            //return await _context.Individuals.Include(WW=>WW.Department).ToListAsync();
         }
 
         // GET: api/Individuals/5
@@ -47,6 +49,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
+            if (individual.IsActive == false) return NotFound("User no longer exists");
 
             return new IndividualReturnDataDTOs
             {
@@ -190,7 +193,8 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 Phone = IndividualRegister.Phone,
                 DepartmentId = IndividualRegister.DepartId,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualRegister.Password)),
-                PasswordSalt = hmac.Key
+                PasswordSalt = hmac.Key,
+                IsActive=true
             };
 
             await _context.Individuals.AddAsync(newIndividual);
@@ -213,6 +217,8 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 .SingleOrDefaultAsync(ww => ww.UserName == IndividualLogin.UserName.ToLower());
 
             if (user == null) return Unauthorized("Username or password is invalid");
+
+            if (user.IsActive == false) return NotFound("User no longer exists");
 
             using var hmac = new HMACSHA512(user.GetPasswordSalt());
 
@@ -243,7 +249,10 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
-            _context.Individuals.Remove(individual);
+            individual.IsActive = false;
+
+            _context.Entry(individual).State = EntityState.Modified;
+            //_context.Individuals.Remove(individual);
             await _context.SaveChangesAsync();
 
             return NoContent();

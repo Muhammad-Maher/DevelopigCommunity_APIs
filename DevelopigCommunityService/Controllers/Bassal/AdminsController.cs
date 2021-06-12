@@ -32,7 +32,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
-            return await _context.Admins.ToListAsync();
+            return await _context.Admins.Where(ww=>ww.IsActive==true).ToListAsync();
         }
 
         // GET: api/Admins/5
