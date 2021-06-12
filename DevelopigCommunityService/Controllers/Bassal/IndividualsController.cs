@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using DevelopigCommunityService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using DevelopigCommunityService.DTOs.AbstractClasses;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -20,7 +21,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
 
-        public IndividualsController(DataContext context,ITokenService tokenService)
+        public IndividualsController(DataContext context, ITokenService tokenService)
         {
             _context = context;
             _tokenService = tokenService;
@@ -30,11 +31,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Individual>>> GetIndividuals()
         {
-            String str= Request.Headers["Authorization"].FirstOrDefault();
 
-           var authUser= _tokenService.GetJWTClams(str);
 
-            return await _context.Individuals.ToListAsync();
+            return await _context.Individuals.Include(ww => ww.Department).ToListAsync();
         }
 
         // GET: api/Individuals/5
@@ -63,15 +62,35 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
         // PUT: api/Individuals/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutIndividual(int id, Individual individual)
+        [HttpPut("password/{id}")]
+        public async Task<IActionResult> PutIndividualPassword(int id, IndividualChangePasswordDTO individualNewData)
         {
-            if (id != individual.Id)
+            if (id != individualNewData.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(individual).State = EntityState.Modified;
+            if (individualNewData.NewPassword != individualNewData.ConfNewPassword) return BadRequest("password and confPassword dont match");
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeaders == null) return Unauthorized("Owner of account can only modify his password");
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+
+
+
+            var EditIndividual = await _context.Individuals.FindAsync(id);
+
+            using var hmac = new HMACSHA512();
+
+            EditIndividual.PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(individualNewData.NewPassword));
+            EditIndividual.PasswordSalt = hmac.Key;
+
+
+            _context.Entry(EditIndividual).State = EntityState.Modified;
 
             try
             {
@@ -79,7 +98,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (! await IndividualExists(id))
+                if (!await IndividualExists(id))
                 {
                     return NotFound();
                 }
@@ -91,6 +110,63 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             return NoContent();
         }
+
+
+
+        // PUT: api/Individuals/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("details/{id}")]
+        public async Task<IActionResult> PutIndividualDetails(int id, AppUserDTOs individualNewData)
+        {
+
+            if (id != individualNewData.Id)
+            {
+                return BadRequest();
+            }
+
+
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+
+
+            var EditIndividual = await _context.Individuals.FindAsync(id);
+
+            EditIndividual.FirstName = individualNewData.FirstName;
+            EditIndividual.LastName = individualNewData.LastName;
+            EditIndividual.Phone = individualNewData.Phone;
+            EditIndividual.Age = individualNewData.Age;
+
+
+
+            _context.Entry(EditIndividual).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await IndividualExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+
+
+
 
         // POST: api/Individuals
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -143,16 +219,16 @@ namespace DevelopigCommunityService.Controllers.Bassal
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualLogin.Password));
 
             byte[] passwordHash = user.GetPasswordHash();
-            
-            for (int i=0;i<ComputeHash.Length;i++)
+
+            for (int i = 0; i < ComputeHash.Length; i++)
             {
                 if (ComputeHash[i] != passwordHash[i]) return Unauthorized("Invalid Password");
             }
 
-            return new IndividualDTOs 
-            { 
-                UserName=user.UserName,
-              Token=_tokenService.CreateToken(user)
+            return new IndividualDTOs
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
             };
         }
 

@@ -11,6 +11,7 @@ using DevelopigCommunityService.Interfaces;
 using System.Text;
 using System.Security.Cryptography;
 using DevelopigCommunityService.DTOs.Bassal;
+using DevelopigCommunityService.DTOs.AbstractClasses;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -119,14 +120,21 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // PUT: api/Admins/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdmin(int id, Admin admin)
+        public async Task<IActionResult> PutAdmin(int id, AdminEditDTO adminNewData)
         {
-            if (id != admin.Id)
+            if (id != adminNewData.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(admin).State = EntityState.Modified;
+            var editAdmin = await _context.Admins.FindAsync(id);
+
+            editAdmin.FirstName = adminNewData.FirstName;
+            editAdmin.LastName = adminNewData.LastName;
+            editAdmin.Phone = adminNewData.Phone;
+            editAdmin.Age = adminNewData.Age;
+
+            _context.Entry(editAdmin).State = EntityState.Modified;
 
             try
             {
