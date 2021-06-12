@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Bassal;
+using DevelopigCommunityService.Interfaces;
+using System.Text;
+using System.Security.Cryptography;
+using DevelopigCommunityService.DTOs.Bassal;
 
 namespace DevelopigCommunityService.Controllers.Bassal
 {
@@ -15,10 +19,12 @@ namespace DevelopigCommunityService.Controllers.Bassal
     public class AdminsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public AdminsController(DataContext context)
+        public AdminsController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/Admins
@@ -42,6 +48,70 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return admin;
         }
 
+
+        // POST: api/Individuals
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("Register")]
+        public async Task<ActionResult<Individual>> Register(AdminRegisterDTOs AdminRegister)
+        {
+
+            if (await AdminExists(AdminRegister.UserName.ToLower())) return BadRequest("Admin name already exists");
+
+            using var hmac = new HMACSHA512();
+
+            var newIndividual = new Individual
+            {
+                UserName = AdminRegister.UserName.ToLower(),
+                FirstName = AdminRegister.FirstName,
+                LastName = AdminRegister.LastName,
+                Age = AdminRegister.Age,
+                Email = AdminRegister.Email,
+                Phone = AdminRegister.Phone,
+                DepartmentId = AdminRegister.DepartId,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(AdminRegister.Password)),
+                PasswordSalt = hmac.Key
+            };
+
+            await _context.Individuals.AddAsync(newIndividual);
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Created successfully");
+
+            //_context.Individuals.Add(individual);
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetIndividual", new { id = individual.Id }, individual);
+        }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<IndividualDTOs>> Login(IndividualLoginDTO IndividualLogin)
+        {
+
+            var user = await _context.Individuals
+                .SingleOrDefaultAsync(ww => ww.UserName == IndividualLogin.UserName.ToLower());
+
+            if (user == null) return Unauthorized("Username or password is invalid");
+
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+
+            var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualLogin.Password));
+
+            for (int i = 0; i < ComputeHash.Length; i++)
+            {
+                if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+            }
+
+            return new IndividualDTOs
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
+        }
+
+
+
+
         // PUT: api/Admins/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -60,7 +130,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AdminExists(id))
+                if (!await AdminExists(id))
                 {
                     return NotFound();
                 }
@@ -100,9 +170,21 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return NoContent();
         }
 
-        private bool AdminExists(int id)
+        //private bool AdminExists(int id)
+        //{
+        //    return _context.Admins.Any(e => e.Id == id);
+        //}
+
+        private async Task<bool> AdminExists(int id)
         {
-            return _context.Admins.Any(e => e.Id == id);
+            return await _context.Admins.AnyAsync(e => e.Id == id);
         }
+
+        private async Task<bool> AdminExists(String UserNameRegistered)
+        {
+
+            return await _context.Admins.AnyAsync(e => e.UserName == UserNameRegistered);
+        }
+
     }
 }
