@@ -29,7 +29,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // GET: api/<ProjectsController>
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
         {
             return await _context.Projects.ToListAsync();
@@ -37,7 +36,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // GET: api/<ProjectsController>/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
