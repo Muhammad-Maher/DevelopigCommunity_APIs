@@ -73,7 +73,7 @@ namespace DevelopigCommunityService.Services
             {
                 Id=int.Parse(Token?.Claims?.FirstOrDefault().Value),
                 NameId = Token?.Claims?.Skip(1).FirstOrDefault().Value,
-                IsAdmin = Token?.Claims?.Skip(2).FirstOrDefault().Value == "IsAdmin" ? true:false
+                IsAdmin = Token?.Claims?.Skip(2).FirstOrDefault().Value == "Admin" ? true:false
             };
 
 
