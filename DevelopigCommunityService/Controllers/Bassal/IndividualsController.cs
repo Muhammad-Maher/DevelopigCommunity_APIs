@@ -33,12 +33,13 @@ namespace DevelopigCommunityService.Controllers.Bassal
             String str= Request.Headers["Authorization"].FirstOrDefault();
 
            var authUser= _tokenService.GetJWTClams(str);
+
             return await _context.Individuals.ToListAsync();
         }
 
         // GET: api/Individuals/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Individual>> GetIndividual(int id)
+        public async Task<ActionResult<IndividualReturnDataDTOs>> GetIndividual(int id)
         {
             var individual = await _context.Individuals.FindAsync(id);
 
@@ -47,7 +48,17 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 return NotFound();
             }
 
-            return individual;
+
+            return new IndividualReturnDataDTOs
+            {
+                UserName = individual.UserName,
+                Age = individual.Age,
+                Email = individual.Email,
+                FirstName = individual.FirstName,
+                Id = individual.Id,
+                LastName = individual.LastName,
+                Phone = individual.Phone
+            };
         }
 
         // PUT: api/Individuals/5
@@ -125,13 +136,15 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
+            using var hmac = new HMACSHA512(user.GetPasswordSalt());
 
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualLogin.Password));
 
+            byte[] passwordHash = user.GetPasswordHash();
+            
             for (int i=0;i<ComputeHash.Length;i++)
             {
-                if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+                if (ComputeHash[i] != passwordHash[i]) return Unauthorized("Invalid Password");
             }
 
             return new IndividualDTOs 

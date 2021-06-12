@@ -122,12 +122,15 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
+            using var hmac = new HMACSHA512(user.GetPasswordSalt());
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studentlogin.Password));
+
+            byte[] passwordHash = user.GetPasswordHash();
+                
 
             for (int i = 0; i < ComputeHash.Length; i++)
             {
-                if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+                if (ComputeHash[i] != passwordHash[i]) return Unauthorized("Invalid Password");
             }
 
             return new StudentsDTO

@@ -10,7 +10,6 @@ namespace DevelopigCommunityService.DTOs.Bassal
 
     public class AdminRegisterDTOs : AppUserDTOs
     {
-        public int? DepartId { get; set; }
         public String Password { get; set; }
         public String ConfPassword { get; set; }
     }

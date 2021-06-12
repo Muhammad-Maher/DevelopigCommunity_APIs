@@ -59,7 +59,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             using var hmac = new HMACSHA512();
 
-            var newIndividual = new Individual
+            var newAdmin = new Admin
             {
                 UserName = AdminRegister.UserName.ToLower(),
                 FirstName = AdminRegister.FirstName,
@@ -67,12 +67,11 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 Age = AdminRegister.Age,
                 Email = AdminRegister.Email,
                 Phone = AdminRegister.Phone,
-                DepartmentId = AdminRegister.DepartId,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(AdminRegister.Password)),
                 PasswordSalt = hmac.Key
             };
 
-            await _context.Individuals.AddAsync(newIndividual);
+            await _context.Admins.AddAsync(newAdmin);
 
             await _context.SaveChangesAsync();
 
@@ -93,13 +92,15 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
+            using var hmac = new HMACSHA512(user.GetPasswordSalt());
 
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(IndividualLogin.Password));
 
+            byte[] passHasg = user.GetPasswordHash();
+            
             for (int i = 0; i < ComputeHash.Length; i++)
             {
-                if (ComputeHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+                if (ComputeHash[i] != passHasg[i]) return Unauthorized("Invalid Password");
             }
 
             return new IndividualDTOs
@@ -143,16 +144,16 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return NoContent();
         }
 
-        // POST: api/Admins
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
-        {
-            _context.Admins.Add(admin);
-            await _context.SaveChangesAsync();
+        //// POST: api/Admins
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
+        //{
+        //    _context.Admins.Add(admin);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
-        }
+        //    return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
+        //}
 
         // DELETE: api/Admins/5
         [HttpDelete("{id}")]

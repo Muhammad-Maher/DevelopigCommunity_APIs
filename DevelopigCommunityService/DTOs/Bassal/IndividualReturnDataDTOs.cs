@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevelopigCommunityService.DTOs.Bassal
 {
-    public class AdminRegister : AppUserDTOs
+    public class IndividualReturnDataDTOs:AppUserDTOs
     {
-        public int? DepartId { get; set; }
-        public String Password { get; set; }
-        public String ConfPassword { get; set; }
     }
 }
