@@ -1,6 +1,7 @@
 ﻿using DevelopigCommunityService.Models.Bassal;
 using DevelopigCommunityService.Models.Ebtisam;
 using DevelopigCommunityService.Models.Maher;
+using DevelopigCommunityService.Models.Reham;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,10 @@ namespace DevelopigCommunityService.Models.Somaya
             = new HashSet<Individual>();
         public virtual ICollection<ProjectFiles> ProjectFiles { get; set; }
             = new HashSet<ProjectFiles>();
+        public virtual ICollection<ProjectVideos> projectVideos { get; set; }
+            = new HashSet<ProjectVideos>();
+        public virtual ICollection<ProjectPhotos> projectPhotos { get; set; }
+            = new HashSet<ProjectPhotos>();
+
     }
 }

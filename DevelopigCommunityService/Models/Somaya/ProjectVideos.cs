@@ -12,5 +12,6 @@ namespace DevelopigCommunityService.Models.Somaya
         public string VideoURL { get; set; }
         [ForeignKey("Project")]
         public int ProjectId { get; set; }
+        public virtual Project Project { get; set; } = new Project();
     }
 }
