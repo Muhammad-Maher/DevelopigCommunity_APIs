@@ -34,12 +34,11 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-            return await _context.Students.ToListAsync();
+            return await _context.Students.Where(ww=>ww.IsActive==false).Include(ww=>ww.Department).ToListAsync();
         }
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
@@ -48,6 +47,9 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
             {
                 return NotFound();
             }
+
+            if (student.IsActive == false) return NotFound("User no longer exists");
+
 
             return student;
         }
