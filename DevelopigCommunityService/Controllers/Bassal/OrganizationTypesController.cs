@@ -54,6 +54,9 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             var authUser = _tokenService.GetJWTClams(authHeaders);
 
+            if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+
+
             if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update OrganizationType");
 
 
@@ -110,6 +113,14 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrganizationType(int id)
         {
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+
+
             var organizationType = await _context.OrganizationTypes.FindAsync(id);
             if (organizationType == null)
             {
