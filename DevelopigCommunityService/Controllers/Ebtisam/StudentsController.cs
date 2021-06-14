@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Text;
 using DevelopigCommunityService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using DevelopigCommunityService.DTOs.AbstractClasses;
 
 namespace DevelopigCommunityService.Controllers.Ebtisam
 {
@@ -56,15 +57,33 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student)
+        [HttpPut("password/{id}")]
+        public async Task<IActionResult> PutStudent(int id, StudentChangePasswordDTO studenindividualNewData)
         {
-            if (id != student.Id)
+            if (id != studenindividualNewData.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            if (studenindividualNewData.NewPassword != studenindividualNewData.ConfNewPassword) return BadRequest("password and confPassword dont match");
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeaders == null) return Unauthorized("Owner of account can only modify his password");
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+
+            var EditStudent = await _context.Students.FindAsync(id);
+
+            using var hmac = new HMACSHA512();
+
+            EditStudent.PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studenindividualNewData.NewPassword));
+            EditStudent.PasswordSalt = hmac.Key;
+
+
+            _context.Entry(EditStudent).State = EntityState.Modified;
 
             try
             {
@@ -84,6 +103,57 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             return NoContent();
         }
+
+
+
+        // PUT: api/Students/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("details/{id}")]
+        public async Task<IActionResult> PutStudent(int id, AppUserDTOs studentlNewData)
+        {
+            if (id != studentlNewData.Id)
+            {
+                return BadRequest();
+            }
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+
+            var EditStudent = await _context.Students.FindAsync(id);
+
+            EditStudent.FirstName = studentlNewData.FirstName;
+            EditStudent.LastName = studentlNewData.LastName;
+            EditStudent.Phone = studentlNewData.Phone;
+            EditStudent.Age = studentlNewData.Age;
+
+
+            _context.Entry(EditStudent).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StudentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+
+
 
         // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -127,6 +197,9 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
+            if (user.IsActive == false) return NotFound("User no longer exists");
+
+
             using var hmac = new HMACSHA512(user.GetPasswordSalt());
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studentlogin.Password));
 
@@ -160,7 +233,11 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
                 return NotFound();
             }
 
-            _context.Students.Remove(student);
+            student.IsActive = false;
+
+            _context.Entry(student).State = EntityState.Modified;
+
+            //_context.Students.Remove(student);
             await _context.SaveChangesAsync();
 
             return NoContent();

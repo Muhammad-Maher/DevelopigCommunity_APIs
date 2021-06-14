@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevelopigCommunityService.Context;
 using DevelopigCommunityService.Models.Reham;
+using DevelopigCommunityService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DevelopigCommunityService.Controllers.Reham
 {
@@ -15,10 +17,12 @@ namespace DevelopigCommunityService.Controllers.Reham
     public class ProjectPhotosController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public ProjectPhotosController(DataContext context)
+        public ProjectPhotosController(DataContext context,ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         // GET: api/ProjectPhotos
@@ -45,8 +49,17 @@ namespace DevelopigCommunityService.Controllers.Reham
         // PUT: api/ProjectPhotos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+       // [Authorize]
         public async Task<IActionResult> PutProjectPhotos(int id, ProjectPhotos projectPhotos)
         {
+
+            //String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            //var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            //if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+
+
             if (id != projectPhotos.Id)
             {
                 return BadRequest();

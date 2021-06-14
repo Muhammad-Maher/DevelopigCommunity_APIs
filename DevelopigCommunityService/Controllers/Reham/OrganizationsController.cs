@@ -30,14 +30,14 @@ namespace DevelopigCommunityService.Controllers.Reham
         
         public async Task<ActionResult<IEnumerable<Organization>>> GetOrganizations()
         {
-            return await _context.Organizations.ToListAsync();
+            return await _context.Organizations.Include(ww=>ww.OrganizationType).ToListAsync();
         }
 
         // GET: api/Organizations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Organization>> GetOrganization(int id)
         {
-            var organization = await _context.Organizations.FindAsync(id);
+            var organization = await _context.Organizations.Include(ww => ww.OrganizationType).FirstOrDefaultAsync(ww=>ww.Id==id);
 
             if (organization == null)
             {
@@ -87,15 +87,15 @@ namespace DevelopigCommunityService.Controllers.Reham
         // POST: api/Organizations
         
         [HttpPost]
-        [Authorize]
+       [Authorize]
         public async Task<ActionResult<Organization>> PostOrganization(Organization organization)
         {
-            //String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
 
-            //var authUser = _tokenService.GetJWTClams(authHeaders);
-            //if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+            if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
 
-            //if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Organization");
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Organization");
 
             _context.Organizations.Add(organization);
             await _context.SaveChangesAsync();

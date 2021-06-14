@@ -119,6 +119,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             var authUser = _tokenService.GetJWTClams(authHeaders);
 
             if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can post OrganizationType");
 
 
             var organizationType = await _context.OrganizationTypes.FindAsync(id);
