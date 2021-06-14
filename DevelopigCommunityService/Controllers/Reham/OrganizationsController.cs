@@ -27,7 +27,7 @@ namespace DevelopigCommunityService.Controllers.Reham
 
         // GET: api/Organizations
         [HttpGet]
-        [Authorize]
+        
         public async Task<ActionResult<IEnumerable<Organization>>> GetOrganizations()
         {
             return await _context.Organizations.ToListAsync();
@@ -35,7 +35,6 @@ namespace DevelopigCommunityService.Controllers.Reham
 
         // GET: api/Organizations/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Organization>> GetOrganization(int id)
         {
             var organization = await _context.Organizations.FindAsync(id);
@@ -53,6 +52,12 @@ namespace DevelopigCommunityService.Controllers.Reham
         [Authorize]
         public async Task<IActionResult> PutOrganization(int id, Organization organization)
         {
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Organization");
+
             if (id != organization.Id)
             {
                 return BadRequest();
@@ -82,9 +87,16 @@ namespace DevelopigCommunityService.Controllers.Reham
         // POST: api/Organizations
         
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult<Organization>> PostOrganization(Organization organization)
         {
+            //String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            //var authUser = _tokenService.GetJWTClams(authHeaders);
+            //if (authHeaders == null) return Unauthorized("Only Admin can post OrganizationType");
+
+            //if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Organization");
+
             _context.Organizations.Add(organization);
             await _context.SaveChangesAsync();
 
@@ -96,6 +108,12 @@ namespace DevelopigCommunityService.Controllers.Reham
         [Authorize]
         public async Task<IActionResult> DeleteOrganization(int id)
         {
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.IsAdmin == false) return Unauthorized("Only Admin can Update Organization");
+
             var organization = await _context.Organizations.FindAsync(id);
             if (organization == null)
             {

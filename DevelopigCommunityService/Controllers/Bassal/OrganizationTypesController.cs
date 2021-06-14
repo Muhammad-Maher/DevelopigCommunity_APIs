@@ -103,7 +103,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
             if (authUser.IsAdmin == false) return Unauthorized("Only Admin can post OrganizationType");
 
 
-           await _context.OrganizationTypes.AddAsync(organizationType);
+            await _context.OrganizationTypes.AddAsync(organizationType);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrganizationType", new { id = organizationType.Id }, organizationType);
