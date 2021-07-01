@@ -31,7 +31,8 @@ namespace DevelopigCommunityService.Services
             {
                 new Claim(JwtRegisteredClaimNames.NameId, appUser.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName,appUser.UserName),
-                new Claim(JwtRegisteredClaimNames.Iss,IsAdmin==true?"Admin":"AppUser")
+                new Claim(JwtRegisteredClaimNames.Iss,IsAdmin==true?"Admin":"AppUser"),
+                new Claim(JwtRegisteredClaimNames.Typ,appUser.GetType().Name)
                 
             };
 
@@ -73,7 +74,8 @@ namespace DevelopigCommunityService.Services
             {
                 Id=int.Parse(Token?.Claims?.FirstOrDefault().Value),
                 NameId = Token?.Claims?.Skip(1).FirstOrDefault().Value,
-                IsAdmin = Token?.Claims?.Skip(2).FirstOrDefault().Value == "Admin" ? true:false
+                IsAdmin = Token?.Claims?.Skip(2).FirstOrDefault().Value == "Admin" ? true:false,
+                Type=Token?.Claims.Skip(3).FirstOrDefault().Value
             };
 
 

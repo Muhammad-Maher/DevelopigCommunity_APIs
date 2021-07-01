@@ -10,5 +10,7 @@ namespace DevelopigCommunityService.DTOs.Bassal
         public int? Id { get; set; }
         public String NameId { get; set; }
         public bool IsAdmin { get; set; }
+
+        public String Type { get; set; }
     }
 }
