@@ -239,7 +239,14 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             if (user == null) return Unauthorized("Username or password is invalid");
 
-            if (user.IsActive == false) return NotFound("User no longer exists");
+            //if (user.IsActive == false) return NotFound("User no longer exists");
+            if (user.IsActive == false)
+            {
+                user.IsActive = true;
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+
 
 
             using var hmac = new HMACSHA512(user.GetPasswordSalt());
