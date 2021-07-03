@@ -1,17 +1,15 @@
-﻿using System;
+﻿using DevelopigCommunityService.DTOs.AbstractClasses;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DevelopigCommunityService.DTOs.AbstractClasses
+namespace DevelopigCommunityService.DTOs.Bassal
 {
-    public abstract class AppUserDTOs
+    public class AppUserEditDetailsDTO
     {
-
-        [Required]
-        public String UserName { get; set; }
-        public int Id { get; set; }
+        public int? DeptId { get; set; }
+        public int? Id { get; set; }
         public String FirstName { get; set; }
         public String LastName { get; set; }
         public int Age { get; set; }

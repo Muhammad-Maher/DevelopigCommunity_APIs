@@ -9,5 +9,8 @@ namespace DevelopigCommunityService.DTOs.Ebtisam
     {
         public String UserName { get; set; }
         public String Token { get; set; }
+
+        public String UserType { get; set; } = "student";
+
     }
 }

@@ -65,6 +65,49 @@ namespace DevelopigCommunityService.Controllers.Bassal
             return individual;
         }
 
+
+        // get details from token
+        [HttpGet("myDetails")]
+        public async Task<ActionResult<AppUserEditDetailsDTO>> GetDetailsByToken()
+        {
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeaders == null) return Unauthorized("Owner of account can only modify his password");
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if ( authUser.Type != "Individual") return Unauthorized("Only owner of this account can modify his data. Login first");
+
+            var individual = await _context.Individuals.FindAsync(authUser.Id);
+
+            if (individual == null)
+            {
+                return NotFound();
+            }
+
+            if (individual.IsActive == false) return NotFound("User no longer exists");
+
+            AppUserEditDetailsDTO individualEditData = new AppUserEditDetailsDTO
+            {
+                Id=individual.Id,
+                FirstName=individual.FirstName,
+                LastName=individual.LastName,
+                Age=individual.Age,
+                Phone=individual.Phone,
+                Email=individual.Email,
+                DeptId=individual.DepartmentId
+                
+            };
+
+
+
+            return individualEditData;
+        }
+
+
+
+
+
         // PUT: api/Individuals/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("password/{id}")]
@@ -83,7 +126,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             var authUser = _tokenService.GetJWTClams(authHeaders);
 
-            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+            if (authUser.Id != id &&authUser.Type!= "Individual") return Unauthorized("Only owner of this account can modify his data. Login first");
 
 
 
@@ -121,7 +164,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
         // PUT: api/Individuals/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("details/{id}")]
-        public async Task<IActionResult> PutIndividualDetails(int id, AppUserDTOs individualNewData)
+        public async Task<IActionResult> PutIndividualDetails(int id, AppUserEditDetailsDTO individualNewData)
         {
 
             if (id != individualNewData.Id)
@@ -135,7 +178,7 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
             var authUser = _tokenService.GetJWTClams(authHeaders);
 
-            if (authUser.Id != id) return Unauthorized("Only owner of this account can modify his data. Login first");
+            if (authUser.Id != id && authUser.Type != "Individual") return Unauthorized("Only owner of this account can modify his data. Login first");
 
 
             var EditIndividual = await _context.Individuals.FindAsync(id);
@@ -243,8 +286,25 @@ namespace DevelopigCommunityService.Controllers.Bassal
 
         // DELETE: api/Individuals/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteIndividual(int id)
         {
+
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Id != id && authUser.Type != "Individual") {
+
+                if (authUser.IsAdmin == false)
+                {
+                    return Unauthorized("Only owner of this account can modify his data. Login first");
+                }
+                    
+             };
+
+
+
             var individual = await _context.Individuals.FindAsync(id);
             if (individual == null)
             {

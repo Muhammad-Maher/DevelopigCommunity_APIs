@@ -13,6 +13,7 @@ using System.Text;
 using DevelopigCommunityService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using DevelopigCommunityService.DTOs.AbstractClasses;
+using DevelopigCommunityService.DTOs.Bassal;
 
 namespace DevelopigCommunityService.Controllers.Ebtisam
 {
@@ -54,6 +55,46 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
             return student;
         }
+
+
+        // get details from token
+        [HttpGet("myDetails")]
+        public async Task<ActionResult<AppUserEditDetailsDTO>> GetDetailsByToken()
+        {
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeaders == null) return Unauthorized("Owner of account can only modify his password");
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Type != "Student") return Unauthorized("Only owner of this account can modify his data. Login first");
+
+            var student = await _context.Students.FindAsync(authUser.Id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            if (student.IsActive == false) return NotFound("User no longer exists");
+
+            AppUserEditDetailsDTO individualEditData = new AppUserEditDetailsDTO
+            {
+                Id = student.Id,
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                Age = student.Age,
+                Phone = student.Phone,
+                Email = student.Email,
+                DeptId = student.DepartmentId
+
+            };
+
+
+
+            return individualEditData;
+        }
+
 
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -109,7 +150,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("details/{id}")]
-        public async Task<IActionResult> PutStudent(int id, AppUserDTOs studentlNewData)
+        public async Task<IActionResult> PutStudent(int id, AppUserEditDetailsDTO studentlNewData)
         {
             if (id != studentlNewData.Id)
             {
@@ -176,7 +217,8 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
                 Email = StudentRegister.Email,
                 Phone = StudentRegister.Phone,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(StudentRegister.Password)),
-                PasswordSalt = hmac.Key
+                PasswordSalt = hmac.Key,
+                IsActive=true
             };
 
             object p = await _context.Students.AddAsync(newstudent);
@@ -216,6 +258,8 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
                 UserName = user.UserName,
                 Token = _tokenService.CreateToken(user)
             };
+
+
         }
 
        

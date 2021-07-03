@@ -69,7 +69,7 @@ namespace DevelopigCommunityService.Services
             var jwtClaim = Token.Claims.FirstOrDefault();
 
 
-
+           
             return new AuthDTOs
             {
                 Id=int.Parse(Token?.Claims?.FirstOrDefault().Value),
@@ -81,7 +81,7 @@ namespace DevelopigCommunityService.Services
 
             //jwtClaim.Value;
 
-
+          
 
         }
     }

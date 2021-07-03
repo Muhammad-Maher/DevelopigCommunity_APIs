@@ -9,5 +9,7 @@ namespace DevelopigCommunityService.DTOs.Bassal
     {
         public String UserName { get; set; }
         public String Token { get; set; }
+
+        public String UserType { get; set; } = "individual";
     }
 }
