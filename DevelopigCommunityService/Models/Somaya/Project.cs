@@ -13,7 +13,9 @@ namespace DevelopigCommunityService.Models.Somaya
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool CodeView { get; set; }
+        public string Description { get; set; }
+        public string CodeUrl { get; set; }
+        public bool CodeView { get; set; } = false;
         public virtual ICollection<Student> Students { get; set; }
             = new HashSet<Student>();
         public virtual ICollection<Individual> Individuals { get; set; }
