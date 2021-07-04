@@ -46,8 +46,7 @@ namespace DevelopigCommunityService.Controllers.Somaya
         }
 
         // POST api/<ProjectsController>
-        [HttpPost]
-        [Authorize]
+        [HttpPost]        
         public async Task<ActionResult<Project>> PostProject(Project project)
         {
             _context.Projects.Add(project);
@@ -57,8 +56,7 @@ namespace DevelopigCommunityService.Controllers.Somaya
         }
 
         // PUT api/<ProjectsController>/5
-        [HttpPut("{id}")]
-        [Authorize]
+        [HttpPut("{id}")]      
         public async Task<IActionResult> PutProject(int id, Project project)
         {
             if (id != project.Id)
@@ -82,8 +80,7 @@ namespace DevelopigCommunityService.Controllers.Somaya
         }
 
         // DELETE api/<ProjectsController>/5
-        [HttpDelete("{id}")]
-        [Authorize]
+        [HttpDelete("{id}")]     
         public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);

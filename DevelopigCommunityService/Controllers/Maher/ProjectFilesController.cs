@@ -52,8 +52,7 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // PUT: api/ProjectFiles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        [Authorize]
+        [HttpPut("{id}")]       
         public async Task<IActionResult> PutProjectFiles(int id, ProjectFiles projectFiles)
         {
             if (id != projectFiles.Id)
@@ -84,8 +83,7 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // POST: api/ProjectFiles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize]
+        [HttpPost]     
         public async Task<ActionResult<ProjectFiles>> PostProjectFiles(ProjectFiles projectFiles)
         {
             _context.ProjectFiles.Add(projectFiles);
@@ -95,8 +93,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         }
 
         // DELETE: api/ProjectFiles/5
-        [HttpDelete("{id}")]
-        [Authorize]
+        [HttpDelete("{id}")]     
         public async Task<IActionResult> DeleteProjectFiles(int id)
         {
             var projectFiles = await _context.ProjectFiles.FindAsync(id);

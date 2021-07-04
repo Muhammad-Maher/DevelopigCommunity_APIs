@@ -29,7 +29,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // GET: api/<ProjectVideosController>
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<ProjectVideos>>> GetProjectVideos()
         {
             return await _context.ProjectVideos.ToListAsync();
@@ -48,7 +47,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // POST api/<ProjectVideosController>
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<ProjectVideos>> PostProjectVideo(ProjectVideos projectVideo)
         {
             _context.ProjectVideos.Add(projectVideo);
@@ -59,7 +57,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // PUT api/<ProjectVideosController>/5
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutProjectVideo(int id, ProjectVideos projectVideo)
         {
             if (id != projectVideo.Id)
@@ -84,7 +81,6 @@ namespace DevelopigCommunityService.Controllers.Somaya
 
         // DELETE api/<ProjectVideosController>/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteProjectVideo(int id)
         {
             var projectVideo = await _context.ProjectVideos.FindAsync(id);

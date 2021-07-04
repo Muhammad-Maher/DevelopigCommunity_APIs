@@ -30,8 +30,7 @@ namespace DevelopigCommunityService.Controllers.Maher
         }
 
         // GET: api/Instructors
-        [HttpGet]
-        [Authorize]
+        [HttpGet]      
         public async Task<ActionResult<IEnumerable<Instructor>>> GetInstructors()
         {
             return await _context.Instructors.ToListAsync();
@@ -39,7 +38,6 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // GET: api/Instructors/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<Instructor>> GetInstructor(int id)
         {
             var instructor = await _context.Instructors.FindAsync(id);
@@ -55,7 +53,6 @@ namespace DevelopigCommunityService.Controllers.Maher
         // PUT: api/Instructors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutInstructor(int id, Instructor instructor)
         {
             if (id != instructor.Id)
@@ -98,8 +95,6 @@ namespace DevelopigCommunityService.Controllers.Maher
 
         // DELETE: api/Instructors/5
         [HttpDelete("{id}")]
-        [Authorize]
-
         public async Task<IActionResult> DeleteInstructor(int id)
         {
             var instructor = await _context.Instructors.FindAsync(id);
