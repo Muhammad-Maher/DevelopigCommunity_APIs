@@ -203,7 +203,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
         {
             if (await StudentExists(StudentRegister.UserName.ToLower())) return BadRequest("Username already exists");
-            
+
 
 
             using var hmac = new HMACSHA512();
@@ -212,13 +212,14 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
 
                 UserName = StudentRegister.UserName.ToLower(),
                 FirstName = StudentRegister.FirstName,
-                
+                LastName = StudentRegister.LastName,
                 Age = StudentRegister.Age,
                 Email = StudentRegister.Email,
                 Phone = StudentRegister.Phone,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(StudentRegister.Password)),
                 PasswordSalt = hmac.Key,
-                IsActive=true
+                IsActive = true,
+                DepartmentId = StudentRegister.DepartId
             };
 
             object p = await _context.Students.AddAsync(newstudent);
@@ -230,6 +231,38 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
             //await _context.SaveChangesAsync();
 
             //return CreatedAtAction("GetStudent", new { id = student.Id }, student);
+
+            #region OLD
+
+            //if (await StudentExists(StudentRegister.UserName.ToLower())) return BadRequest("Username already exists");
+
+
+
+            //using var hmac = new HMACSHA512();
+            //var newstudent = new Student
+            //{
+
+            //    UserName = StudentRegister.UserName.ToLower(),
+            //    FirstName = StudentRegister.FirstName,
+
+            //    Age = StudentRegister.Age,
+            //    Email = StudentRegister.Email,
+            //    Phone = StudentRegister.Phone,
+            //    PasswordHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(StudentRegister.Password)),
+            //    PasswordSalt = hmac.Key,
+            //    IsActive=true
+            //};
+
+            //object p = await _context.Students.AddAsync(newstudent);
+
+            //int v = await _context.SaveChangesAsync();
+
+            //return Ok("Created successfully");
+            //_context.Students.Add(student);
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetStudent", new { id = student.Id }, student); 
+            #endregion
         }
         [HttpPost("Login")]
         public async Task<ActionResult<StudentsDTO>> Login(StudentloginDTO studentlogin)
@@ -253,7 +286,7 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studentlogin.Password));
 
             byte[] passwordHash = user.GetPasswordHash();
-                
+
 
             for (int i = 0; i < ComputeHash.Length; i++)
             {
@@ -266,6 +299,40 @@ namespace DevelopigCommunityService.Controllers.Ebtisam
                 Token = _tokenService.CreateToken(user)
             };
 
+            #region OLD
+            //var user = await _context.Students
+            //     .SingleOrDefaultAsync(ww => ww.UserName == studentlogin.UserName.ToLower());
+
+            //if (user == null) return Unauthorized("Username or password is invalid");
+
+            ////if (user.IsActive == false) return NotFound("User no longer exists");
+            //if (user.IsActive == false)
+            //{
+            //    user.IsActive = true;
+            //    _context.Entry(user).State = EntityState.Modified;
+            //    await _context.SaveChangesAsync();
+            //}
+
+
+
+            //using var hmac = new HMACSHA512(user.GetPasswordSalt());
+            //var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(studentlogin.Password));
+
+            //byte[] passwordHash = user.GetPasswordHash();
+
+
+            //for (int i = 0; i < ComputeHash.Length; i++)
+            //{
+            //    if (ComputeHash[i] != passwordHash[i]) return Unauthorized("Invalid Password");
+            //}
+
+            //return new StudentsDTO
+            //{
+            //    UserName = user.UserName,
+            //    Token = _tokenService.CreateToken(user)
+            //};
+
+            #endregion
 
         }
 

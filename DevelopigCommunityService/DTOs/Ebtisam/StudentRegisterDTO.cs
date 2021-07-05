@@ -8,7 +8,10 @@ namespace DevelopigCommunityService.DTOs.Ebtisam
 {
     public class StudentRegisterDTO: AppUserDTOs
     {
-        public int? StudentId {  get; set; }
+        //public int? StudentId {  get; set; }
+        //public String Password { get; set; }
+        //public String ConfPassword { get; set; }
+        public int? DepartId { get; set; }
         public String Password { get; set; }
         public String ConfPassword { get; set; }
     }

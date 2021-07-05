@@ -90,18 +90,26 @@ namespace DevelopigCommunityService.Controllers.Bassal
         [HttpPost("Login")]
         public async Task<ActionResult<AdminDTOs>> Login(AdminLoginDTOs adminLogin)
         {
-
             var admin = await _context.Admins
                 .SingleOrDefaultAsync(ww => ww.UserName == adminLogin.UserName.ToLower());
 
             if (admin == null) return Unauthorized("admin username or password is invalid");
+
+            if (admin.IsActive == false)
+            {
+                admin.IsActive = true;
+                _context.Entry(admin).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+
+
 
             using var hmac = new HMACSHA512(admin.GetPasswordSalt());
 
             var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(adminLogin.Password));
 
             byte[] passHasg = admin.GetPasswordHash();
-            
+
             for (int i = 0; i < ComputeHash.Length; i++)
             {
                 if (ComputeHash[i] != passHasg[i]) return Unauthorized("Invalid Password");
@@ -112,6 +120,30 @@ namespace DevelopigCommunityService.Controllers.Bassal
                 UserName = admin.UserName,
                 Token = _tokenService.CreateToken(admin)
             };
+
+            #region OLD
+            //var admin = await _context.Admins
+            //    .SingleOrDefaultAsync(ww => ww.UserName == adminLogin.UserName.ToLower());
+
+            //if (admin == null) return Unauthorized("admin username or password is invalid");
+
+            //using var hmac = new HMACSHA512(admin.GetPasswordSalt());
+
+            //var ComputeHash = hmac.ComputeHash(Encoding.UTF32.GetBytes(adminLogin.Password));
+
+            //byte[] passHasg = admin.GetPasswordHash();
+
+            //for (int i = 0; i < ComputeHash.Length; i++)
+            //{
+            //    if (ComputeHash[i] != passHasg[i]) return Unauthorized("Invalid Password");
+            //}
+
+            //return new AdminDTOs
+            //{
+            //    UserName = admin.UserName,
+            //    Token = _tokenService.CreateToken(admin)
+            //}; 
+            #endregion
         }
 
 
@@ -186,6 +218,42 @@ namespace DevelopigCommunityService.Controllers.Bassal
         //{
         //    return _context.Admins.Any(e => e.Id == id);
         //}
+
+
+        [HttpGet("myDetails")]
+        public async Task<ActionResult<AppUserEditDetailsDTO>> GetDetailsByToken()
+        {
+            String authHeaders = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeaders == null) return Unauthorized("Owner of account can only modify his password");
+
+            var authUser = _tokenService.GetJWTClams(authHeaders);
+
+            if (authUser.Type != "Admin") return Unauthorized("Only owner of this account can modify his data. Login first");
+
+            var admin = await _context.Admins.FindAsync(authUser.Id);
+
+            if (admin == null)
+            {
+                return NotFound();
+            }
+
+            if (admin.IsActive == false) return NotFound("User no longer exists");
+
+            AppUserEditDetailsDTO individualEditData = new AppUserEditDetailsDTO
+            {
+                Id = admin.Id,
+                FirstName = admin.FirstName,
+                LastName = admin.LastName,
+                Age = admin.Age,
+                Phone = admin.Phone,
+                Email = admin.Email,
+
+            };
+
+            return individualEditData;
+        }
+
 
         private async Task<bool> AdminExists(int id)
         {
