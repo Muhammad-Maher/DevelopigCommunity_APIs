@@ -28,9 +28,8 @@ namespace DevelopigCommunityService.Models.Maher
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
 
-        public virtual Department Department { get; set; } = new Department();
-
-        public virtual Organization Organization { get; set; } = new Organization();
+        public virtual Department Department { get; set; }
+        public virtual Organization Organization { get; set; } 
        
 
    

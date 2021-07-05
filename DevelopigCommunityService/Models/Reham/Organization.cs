@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,6 +36,9 @@ namespace DevelopigCommunityService.Models.Reham
 
         [Required(ErrorMessage ="Enter website for organization")]
         public String Website { get; set; }
+
+        [ForeignKey("OrganiztionType")]
+        public int? OrganiztionTypeId { get; set; }
 
         public virtual OrganizationType OrganizationType { get; set; }
 
